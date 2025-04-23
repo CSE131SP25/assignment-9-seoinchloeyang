@@ -11,7 +11,8 @@ public class Snake {
 	private double deltaY;
 	
 	public Snake() {
-		//FIXME - set up the segments instance variable
+		segments = new LinkedList<>();
+		segments.add(new BodySegment(0.5, 0.5, SEGMENT_SIZE));
 		deltaX = 0;
 		deltaY = 0;
 	}
@@ -37,14 +38,26 @@ public class Snake {
 	 * based on the current direction of travel
 	 */
 	public void move() {
-		//FIXME
+		// Step 1: get current head
+				BodySegment head = segments.getFirst();
+				double newX = head.getX() + deltaX;
+				double newY = head.getY() + deltaY;
+
+				// Step 2: add new head at new location
+				BodySegment newHead = new BodySegment(newX, newY, SEGMENT_SIZE);
+				segments.addFirst(newHead);
+
+				// Step 3: remove tail
+				segments.removeLast();
 	}
 	
 	/**
 	 * Draws the snake by drawing each segment
 	 */
 	public void draw() {
-		//FIXME
+		for (BodySegment segment : segments) {
+			segment.draw();
+		}
 	}
 	
 	/**
@@ -53,16 +66,29 @@ public class Snake {
 	 * @return true if the snake successfully ate the food
 	 */
 	public boolean eatFood(Food f) {
-		//FIXME
-		return false;
+		 BodySegment head = segments.getFirst();
+		    double dx = head.getX() - f.getX();
+		    double dy = head.getY() - f.getY();
+		    double distance = Math.sqrt(dx * dx + dy * dy);
+
+		    return distance < SEGMENT_SIZE + Food.FOOD_SIZE;
 	}
 	
+	public void grow() {
+		BodySegment tail = segments.getLast();
+		double tailX = tail.getX();
+		double tailY = tail.getY();
+		segments.addLast(new BodySegment(tailX, tailY, SEGMENT_SIZE));
+	}
 	/**
 	 * Returns true if the head of the snake is in bounds
 	 * @return whether or not the head is in the bounds of the window
 	 */
 	public boolean isInbounds() {
-		//FIXME
-		return true;
+		BodySegment head = segments.getFirst();
+		double x = head.getX();
+		double y = head.getY();
+		return x >= 0 && x <= 1 && y >= 0 && y <= 1;
+	
 	}
 }
